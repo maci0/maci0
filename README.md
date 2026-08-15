@@ -2,11 +2,12 @@
 
 # Marcel Wysocki
 
-**Systems engineer @ Red Hat · Singapore**
+**Senior Principal Architect @ Red Hat · Singapore**
 
 I build AI inference infrastructure, from WGSL compute kernels to distributed GPU clusters,
 with side quests in container runtimes and binary reverse engineering.
 
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-marcel--w--wysocki-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/marcel-w-wysocki)
 ![Zig](https://img.shields.io/badge/Zig-F7A41D?style=flat-square&logo=zig&logoColor=black)
 ![Go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
