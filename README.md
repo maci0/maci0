@@ -1,8 +1,6 @@
 <div align="center">
 
-# Marcel Wysocki
-
-**Senior Principal Architect @ Red Hat · Singapore**
+<img src="banner.svg" width="860" alt="Marcel Wysocki, Senior Principal Architect @ Red Hat, Singapore" />
 
 I build AI inference infrastructure and container runtimes, from WGSL compute kernels
 to distributed GPU clusters, with side quests in binary reverse engineering.
@@ -48,5 +46,10 @@ to distributed GPU clusters, with side quests in binary reverse engineering.
 <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=maci0&layout=compact&theme=transparent&hide_border=true&langs_count=6" height="160" alt="languages" />
 
 *Zig for things that must be fast, Python for things that must exist by Friday.*
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/maci0/maci0/output/github-snake-dark.svg" />
+  <img src="https://raw.githubusercontent.com/maci0/maci0/output/github-snake.svg" alt="contribution snake" />
+</picture>
 
 </div>
