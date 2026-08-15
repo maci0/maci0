@@ -4,8 +4,8 @@
 
 **Senior Principal Architect @ Red Hat · Singapore**
 
-I build AI inference infrastructure, from WGSL compute kernels to distributed GPU clusters,
-with side quests in container runtimes and binary reverse engineering.
+I build AI inference infrastructure and container runtimes, from WGSL compute kernels
+to distributed GPU clusters, with side quests in binary reverse engineering.
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-marcel--w--wysocki-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/marcel-w-wysocki)
 ![Zig](https://img.shields.io/badge/Zig-F7A41D?style=flat-square&logo=zig&logoColor=black)
