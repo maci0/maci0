@@ -22,12 +22,17 @@ to distributed GPU clusters, with side quests in binary reverse engineering.
 - [**muninn-sidecar**](https://github.com/maci0/muninn-sidecar): Persistent memory for AI agents, shipped as a Go sidecar
 - [**gpustack-modelsync**](https://github.com/maci0/gpustack-modelsync): Declarative model placement across GPU cluster nodes
 - [**gb10-thermal-toolkit**](https://github.com/maci0/gb10-thermal-toolkit): Thermal-driven GPU clock governor for NVIDIA DGX Spark, fixes the under-load power-off
+- [**dgx-spark-deepseek**](https://github.com/maci0/dgx-spark-deepseek-v4-flash-0731): Field notes from serving DeepSeek-V4-Flash on a 2-node DGX Spark RoCE cluster, everything measured on real hardware
+- [**review-prompts**](https://github.com/maci0/review-prompts): Auto-fix review loop, 37 specialized prompts dispatched to whatever AI coding agents you have installed
 
 ## 🕹️ Reverse engineering
 
 - [**rebrew**](https://github.com/maci0/rebrew): Compiler-in-the-loop decompilation workbench for binary-matching reversing
 - [**europa1400-networkfix**](https://github.com/maci0/europa1400-networkfix): Fixed multiplayer in a 2001 game the vendor abandoned
 - [**openmiles**](https://github.com/maci0/openmiles): Open reimplementation of the Miles Sound System
+- [**resembl**](https://github.com/maci0/resembl): Assembly code similarity search
+- [**recoverage**](https://github.com/maci0/recoverage): Coverage dashboard for binary-matching decompilation projects
+- [**europa1400-lua**](https://github.com/maci0/europa1400-lua): Lua console injected into a running 2001 game, for reverse engineers and modders
 
 ## ⚙️ Runtimes and clusters
 
