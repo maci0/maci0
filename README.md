@@ -4,25 +4,27 @@
 
 **Systems engineer @ Red Hat · Singapore**
 
-Container runtimes · GPU inference · Reverse engineering
+I build AI inference infrastructure, from WGSL compute kernels to distributed GPU clusters,
+with side quests in container runtimes and binary reverse engineering.
 
 ![Zig](https://img.shields.io/badge/Zig-F7A41D?style=flat-square&logo=zig&logoColor=black)
 ![Go](https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![C](https://img.shields.io/badge/C-A8B9CC?style=flat-square&logo=c&logoColor=black)
+![CUDA](https://img.shields.io/badge/GPU-76B900?style=flat-square&logo=nvidia&logoColor=white)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white)
 
 </div>
 
-## 🔥 LLM inference, down to the metal
+## 🧠 AI inference, down to the metal
 
 | | |
 |---|---|
-| [**agave**](https://github.com/maci0/agave) | LLM inference engine written from scratch in Zig |
-| [**beam**](https://github.com/maci0/beam) | Ray's API in ~1,400 lines of pure Python, enough to run vLLM distributed across nodes. NVIDIA and AMD, validated cross-node |
-| [**vllm-webgpu**](https://github.com/maci0/vllm-webgpu) | vLLM platform plugin for WebGPU inference via WGSL compute kernels |
-| [**gpustack-modelsync**](https://github.com/maci0/gpustack-modelsync) | Sync GPUStack models across cluster nodes with a small matrix UI |
-| [**gb10-thermal-toolkit**](https://github.com/maci0/gb10-thermal-toolkit) | Temperature-driven GPU clock governor for NVIDIA DGX Spark, works around the under-load power-off issue |
+| [**agave**](https://github.com/maci0/agave) | LLM inference engine written from scratch in Zig, no Python runtime, no framework tax |
+| [**beam**](https://github.com/maci0/beam) | Ray's API reimplemented in ~1,400 lines of pure Python, enough to run vLLM multi-node. NVIDIA and AMD, validated cross-node |
+| [**vllm-webgpu**](https://github.com/maci0/vllm-webgpu) | vLLM platform plugin targeting WebGPU: WGSL compute kernels instead of CUDA |
+| [**muninn-sidecar**](https://github.com/maci0/muninn-sidecar) | Persistent memory for AI agents, shipped as a Go sidecar |
+| [**gpustack-modelsync**](https://github.com/maci0/gpustack-modelsync) | Declarative model placement across GPU cluster nodes |
+| [**gb10-thermal-toolkit**](https://github.com/maci0/gb10-thermal-toolkit) | Thermal-driven GPU clock governor for NVIDIA DGX Spark, fixes the under-load power-off |
 
 ## 🕹️ Reverse engineering
 
@@ -32,12 +34,11 @@ Container runtimes · GPU inference · Reverse engineering
 | [**europa1400-networkfix**](https://github.com/maci0/europa1400-networkfix) | Fixed multiplayer in a 2001 game the vendor abandoned |
 | [**openmiles**](https://github.com/maci0/openmiles) | Open reimplementation of the Miles Sound System |
 
-## ⚙️ Infrastructure
+## ⚙️ Runtimes and clusters
 
 | | |
 |---|---|
 | [**katamaran**](https://github.com/maci0/katamaran) | Live migration for Kata Containers |
-| [**muninn-sidecar**](https://github.com/maci0/muninn-sidecar) | Persistent memory sidecar for AI agents, in Go |
 | [**vmetal-openshift**](https://github.com/maci0/vmetal-openshift) | Virtual baremetal OpenShift lab: Redfish BMC emulation, bonded NICs, split-DNS, one Ansible topology |
 
 <div align="center">
