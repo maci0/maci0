@@ -23,7 +23,7 @@ to distributed GPU clusters, with side quests in binary reverse engineering.
 - [**gpustack-modelsync**](https://github.com/maci0/gpustack-modelsync): Declarative model placement across GPU cluster nodes
 - [**gb10-thermal-toolkit**](https://github.com/maci0/gb10-thermal-toolkit): Thermal-driven GPU clock governor for NVIDIA DGX Spark, fixes the under-load power-off
 - [**dgx-spark-deepseek**](https://github.com/maci0/dgx-spark-deepseek-v4-flash-0731): Field notes from serving DeepSeek-V4-Flash on a 2-node DGX Spark RoCE cluster, everything measured on real hardware
-- [**review-prompts**](https://github.com/maci0/review-prompts): Auto-fix review loop, 37 specialized prompts dispatched to whatever AI coding agents you have installed
+- [**gaunlet**](https://github.com/maci0/gaunlet): Auto-fix review loop, 50 specialized prompts dispatched to whatever AI coding agents you have installed
 
 ## 🕹️ Reverse engineering
 
