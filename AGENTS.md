@@ -126,6 +126,7 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 - **Static types everywhere.** Make illegal states unrepresentable. Trust the type system inside a boundary instead of re-checking what the static interface already guarantees.
 - **Fail as early as possible:** compile time beats startup, startup beats request time. Compile errors beat crashes, crashes beat subtle bugs.
 - **Misconfiguration fails loud** at load when self-contained, otherwise at the first point it resolves. Never silently skip a missing referent.
+- **Never silence a finding.** Fix the code instead of loosening a type, disabling a lint rule, or adding an empty suppression comment. A suppression that is genuinely right stays narrow, local, and carries its reason.
 - **Idiomatic error handling.** Propagate or handle, never swallow. An empty catch names what it swallows and why nothing else can reach it, and wraps exactly one statement.
 - **Resources are explicit.** Pass the allocator or handle in, release it next to the acquisition (`defer` / `errdefer` / context manager), never a hidden global. Allocation may fail; deallocation must succeed.
 - **Handle the edges:** empty, zero, one, max, malformed, truncated.
@@ -154,7 +155,7 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 - **Parsimony.** A dependency is a permanent maintenance and security cost. Check the standard library, then the platform, then what is already installed.
 - **Use what is already imported.** No manual `struct.unpack` of headers when a binary-format library is linked, no regex-parsing a language whose parser is in the tree, no `os.path` surgery where `Path` exists.
 - **Native APIs over external processes.** Rather than `exec`/`subprocess`/backticks for `pgrep`, `ip`, `jq`, `curl`, `grep`, `awk`, or `ps`: walk `/proc`, an HTTP client, a JSON parser, netlink or syscalls. Shelling out adds a dependency, a parsing surface, and an injection path. Shell out only where no in-process API exists, and say so in a comment.
-- **One language per file.** No Python heredocs or `python -c "..."` inside shell scripts. Write the script and call it. Same rule in Ansible: purpose-built modules (`stat`, `slurp`, `copy`, `file`, `get_url`, `uri`, `community.libvirt.*`) over `command`, which is the fallback when no module exists (note it), and over `shell`, which is only for real shell features (pipes, redirection, globbing) with `set -o pipefail` and `args: {executable: /bin/bash}`.
+- **One language per file, one language per command.** Never embed Python in shell: no `python -c "..."`, no `python3 - <<'EOF'` heredoc, not in a committed script and not in a one-off command typed at a prompt. Write the script in its own file and call it. Same rule in reverse for shell inside Python. Same rule in Ansible: purpose-built modules (`stat`, `slurp`, `copy`, `file`, `get_url`, `uri`, `community.libvirt.*`) over `command`, which is the fallback when no module exists (note it), and over `shell`, which is only for real shell features (pipes, redirection, globbing) with `set -o pipefail` and `args: {executable: /bin/bash}`.
 - **Prefer open-source tooling** for compilers, disassemblers, emulators, and converters. Never let a build or test gate depend on a closed-source tool.
 - **Vendored code is pinned** to an upstream revision with a manifest of local patches, and the build fails loudly when they are not applied instead of silently compiling pristine upstream.
 
@@ -269,7 +270,7 @@ uvx ruff check .             # ephemeral tool, replaces pipx run
 
 Install uv with `curl -LsSf https://astral.sh/uv/install.sh | sh` (or `brew install uv`).
 
-**Every project gates on `black`, `ruff`, and `mypy`**, run through `uv run` in pre-commit and CI. **Static types always:** annotations on every signature (params and return), PEP 604 unions (`T | None`), specific generics (`dict[int, str]`, not bare `dict`), named aliases for complex types. Each remaining `Any` explains why narrowing is infeasible. Never silence a finding by loosening a type or disabling a rule globally; fix the code, or take a narrow, justified exception.
+**Every project gates on `black`, `ruff`, and `mypy`**, run through `uv run` in pre-commit and CI. **Static types always:** annotations on every signature (params and return), PEP 604 unions (`T | None`), specific generics (`dict[int, str]`, not bare `dict`), named aliases for complex types. Each remaining `Any` explains why narrowing is infeasible.
 
 Standalone scripts declare inline deps and run with `uv run script.py`:
 
@@ -305,7 +306,7 @@ The lockfile is `bun.lock`: no `package-lock.json` beside it, and drop `.nvmrc` 
 
 A repo already standardized on another package manager keeps it. Do not migrate unasked.
 
-**Linting is `oxlint`**, never ESLint, with [anti-slop](https://github.com/dmmulroy/anti-slop) and [@rikalabs/oxlint-standards](https://github.com/Rika-Labs/oxlint-standards) at `strict`. Never disable an anti-slop rule, add an empty `SAFETY:` comment, or launder a type (`as any`, `as unknown as T`, a widened signature) to silence a finding: fix the code, or take a narrow exception with a reason. Review what `oxlint --fix` rewrites before committing it: its one-var, numeric-separator, and comment-case rewrites have broken bit-exact ports.
+**Linting is `oxlint`**, never ESLint, with [anti-slop](https://github.com/dmmulroy/anti-slop) and [@rikalabs/oxlint-standards](https://github.com/Rika-Labs/oxlint-standards) at `strict`. The silencing moves to watch for here: disabling an anti-slop rule, an empty `SAFETY:` comment, and type laundering (`as any`, `as unknown as T`, a widened signature). Review what `oxlint --fix` rewrites before committing it: its one-var, numeric-separator, and comment-case rewrites have broken bit-exact ports.
 
 **Built-in APIs to check before adding any package:**
 
