@@ -128,18 +128,34 @@ bunx eslint src/
 
 | Task | Bun built-in | Replaces |
 |------|-------------|---------|
-| HTTP server + WebSockets | `Bun.serve()` | express, fastify, hono |
+| HTTP server + WebSockets + HTTP/3 | `Bun.serve()` | express, fastify, hono |
+| File I/O | `Bun.file()` / `Bun.write()` | fs, fs-extra |
 | PostgreSQL | `Bun.sql` | pg, postgres.js |
 | SQLite | `import { Database } from "bun:sqlite"` | better-sqlite3 |
 | Redis | `Bun.redis` | ioredis, redis |
-| S3 / R2 | `Bun.S3Client` | @aws-sdk/client-s3 |
-| Image processing | `Bun.image()` | sharp, jimp |
+| S3 / R2 / Spaces / MinIO | `Bun.S3Client` | @aws-sdk/client-s3 |
+| Image processing (resize, JPEG/PNG/WebP/AVIF/HEIC) | `Bun.image()` | sharp, jimp |
 | Shell scripting | `` Bun.$`cmd` `` | execa, shelljs |
+| Subprocess / child process | `Bun.spawn()` | child_process, execa |
+| TCP sockets | `Bun.connect()` / `Bun.listen()` | net |
+| DNS | `Bun.dns.resolve()` | dns, node:dns/promises |
 | Glob | `new Bun.Glob(pattern)` | glob, fast-glob |
 | Password hashing | `Bun.password` | bcrypt, argon2 |
+| Hashing | `Bun.hash()` / `new Bun.CryptoHasher()` | crypto, xxhash, md5 |
+| UUID | `Bun.randomUUIDv7()` | uuid |
 | Markdown | `Bun.markdown` | marked, remark |
 | JSON with comments | `Bun.JSONC` | json5 |
 | Semver | `Bun.semver` | semver |
+| Color parsing / conversion | `Bun.color()` | chalk (color math), tinycolor2 |
+| Terminal string width | `Bun.stringWidth()` | string-width |
+| Object inspection | `Bun.inspect()` | util.inspect |
+| Deep equality | `Bun.deepEquals()` | deep-equal, lodash.isequal |
+| Bundler | `Bun.build()` | esbuild, webpack, rollup |
+| Transpile TS/JSX | `new Bun.Transpiler()` | esbuild (direct use) |
+| File archives (tar/gz) | `Bun.Archive` | tar, archiver |
+| Cron | `Bun.cron()` | node-cron |
+| Terminal / PTY | `Bun.Terminal` | node-pty |
+| WebView / browser automation | `Bun.WebView` | puppeteer, playwright (simple cases) |
 
 ---
 
