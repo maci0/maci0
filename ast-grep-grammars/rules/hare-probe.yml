@@ -1,0 +1,8 @@
+id: hare-probe
+language: hare
+severity: hint
+message: found a call
+rule:
+  pattern:
+    context: 'export fn _probe() void = { $FN($$$ARGS); };'
+    selector: call_expression

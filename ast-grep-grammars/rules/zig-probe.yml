@@ -1,6 +1,6 @@
 id: zig-probe
 language: zig
 severity: hint
-message: found a function
+message: found an error-returning function
 rule:
   pattern: fn $NAME($$$ARGS) !void { $$$BODY }

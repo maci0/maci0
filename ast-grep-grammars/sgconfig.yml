@@ -1,0 +1,33 @@
+# ast-grep project config.
+#
+# ast-grep ships no Zig, C3, or Hare grammar, so structural search over those
+# languages needs one registered here. Build them with build.sh; the .so files
+# are build artifacts and are not committed.
+#
+# expandoChar is per language and is not cosmetic: ast-grep rewrites "$VAR" to
+# "<expandoChar>VAR" before parsing the pattern, so the placeholder has to be a
+# legal identifier in the target language, in the position the pattern uses it.
+# Get it wrong and every metavariable pattern matches nothing, silently, at
+# exit 0. See README.md for how each value below was chosen.
+ruleDirs:
+  - rules
+customLanguages:
+  zig:
+    libraryPath: zig.so
+    extensions: [zig]
+    # Zig identifiers are [A-Za-z0-9_] and "$" is not one of them.
+    expandoChar: "_"
+  c3:
+    libraryPath: c3.so
+    extensions: [c3, c3i, c3t]
+    # C3 classifies identifiers by case: lowercase is a variable or function,
+    # Capitalized is a type, ALL_CAPS is a constant, and a leading "$" is a
+    # compile-time identifier the grammar accepts as something else entirely.
+    # Metavariable names are uppercase, so the expando has to be a lowercase
+    # letter: "$NAME" becomes "aNAME", which parses as an ordinary ident.
+    expandoChar: "a"
+  hare:
+    libraryPath: hare.so
+    extensions: [ha]
+    # Hare identifiers are [A-Za-z0-9_] and "$" is not one of them.
+    expandoChar: "_"

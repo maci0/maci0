@@ -1,0 +1,8 @@
+id: c3-probe
+language: c3
+severity: hint
+message: found a call
+rule:
+  pattern:
+    context: 'fn void _probe() { $FN($$$ARGS); }'
+    selector: call_expr
