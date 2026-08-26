@@ -27,6 +27,13 @@ Good: "The fix shipped in 2.11.5, resolving the issue."
 Bad: "Storage failed — Hitachi CSI driver — causing 0 migrations."
 Good: "Storage failed (Hitachi CSI driver), causing 0 migrations."
 
+**Prose discipline:**
+
+- Comments and docs state contracts and context, not reasoning transcripts. Do not narrate control flow, preserve review history, or restate the code.
+- Do not comment on facts that are obvious from the code.
+- Use direct, concrete terms. No metaphors. Before writing "contract", "boundary", or "shape", check whether a more exact word names the subject: "response fields", "JSON validation", "ESM exports".
+- Keep behavior, failure, timing, ownership, and safe-use facts. Link the rationale rather than inlining it.
+
 ---
 
 ## Git and AI Attribution
@@ -39,7 +46,9 @@ Output must be indistinguishable from a skilled human's work. This applies to al
 2. **No model names or AI tool names** in any git-visible text: not in commit messages, branch names, PR titles, PR bodies, review comments, or inline code comments. This includes: Claude, GPT, Copilot, Gemini, ChatGPT, Anthropic, OpenAI, Cursor, Codeium, etc.
 3. **Commit messages sound human.** Short, direct, lowercase-start allowed. Match the repo's existing commit style. Write what changed and why, not a press release.
 4. **PR descriptions are minimal.** Describe what changed and how to test. No "Summary of Changes" headers, no bullet-point-per-file breakdowns, no celebratory language.
-5. **Never stage throwaway files.** Do not commit agent working notes, handoff docs (HANDOVER.md, HANDOFF.md), or exploratory prototypes. Put scratch work in `.tmp/` (gitignored).
+5. **Never stage throwaway files.** Do not commit agent working notes, handoff docs (HANDOVER.md, HANDOFF.md), or exploratory prototypes. Put scratch work in `.scratch/` (gitignored).
+
+Human collaborators are credited normally: a real `Co-authored-by: Name <email>` trailer for a real person is correct and expected.
 
 **Commit message style:**
 
@@ -60,20 +69,171 @@ are handled gracefully.
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
+**Branching:**
+
+- Never commit directly to `main` or to a release branch. Cut `feat/`, `fix/`, `refactor/`, `docs/`, `test/`, `chore/`.
+- Never bypass hooks (`--no-verify`) without an explicit instruction to do so.
+- Rewrites use `--force-with-lease`, never raw `--force`.
+
+**Parallel sessions in one repository require isolation.**
+
+Several agents or sessions can share one checkout. A `git checkout` or branch switch in a shared tree silently destroys another session's uncommitted work.
+
+- One task, one `git worktree` on its own branch. Confirm which branch it is cut from instead of assuming `main` or whatever is currently checked out.
+- Never `git stash` / `git stash pop` in a shared repository, including inside a worktree and inside any subagent. The stash lives in the shared object store, not the per-worktree tree, so a pop can resurrect another session's changes over yours. To compare against a base ref without stashing, use `git show <ref>:<path>` or `git diff <ref> -- <path>`.
+- Never touch a worktree, branch, or uncommitted change you did not create. Tear down only your own, by name. No wildcard `git branch -D 'fix/*'`.
+- A conflicting merge keeps its branch. Losing a run's entire output silently is worse than a noisy failure.
+- End the session on the branch it started on.
+
+---
+
+## Working Loop
+
+1. Take one bounded slice: one subsystem, one asset class, one function cluster.
+2. Investigate before editing. Read the code, the disassembly, the docs.
+3. Make the change.
+4. Verify that slice (round trip, golden, unit test).
+5. Run the full gate. Fix regressions immediately, do not stack work on a red tree.
+6. Update the docs the change affects, in the same change.
+7. Tidy the tree: delete scratch captures, debug dumps, regenerable caches, screenshots.
+8. Deliver a verified, documented artifact.
+
+Change one lever at a time. Two simultaneous changes to a measured system produce one unusable result.
+
+Keep changes focused. Do not slip unrelated refactors into a fix, and do not fight a toolchain limitation that a documented workaround already covers.
+
+---
+
+## Evidence and Honesty
+
+- **Missing is missing.** Never fake, smooth, or interpolate a value to fill a gap. Show `n/a`, an unlit meter, an explained empty result. A fabricated zero reads as a healthy zero.
+- **Withhold the verdict when the evidence is thin.** No health grade, score, or percentage from partial coverage. Say what is missing instead.
+- **Write only what you checked.** A claim in a doc, commit, or comment is read as fact. Give mechanism and command, not motive. Mark unverified things as unverified, or omit them.
+- **Classify truthfully.** Do not label an unidentified thing "suspected X". Name the concrete role you can prove and record the exact remaining unknown.
+- **Baseline and candidate must match** in workload, seed, duration, inputs, collectors, and configuration. A number from a different setup is not a comparison.
+- **Never profile a debug build.** Optimization off can move a hot path by an order of magnitude and invert the profile.
+- **A win in one metric is not acceptance.** Lower CPU with worse fidelity is a regression. Regressions over a few percent need an explanation, not a merge.
+- **Reproduce before believing a green run.** A filtered test run hides compile errors in the code it filtered out. Read exit codes directly, never through a pipe that reports the last command's status.
+
 ---
 
 ## Coding Discipline
 
-- **Keep changes focused.** Do not slip in unrelated refactors alongside a fix or feature.
-- **No backwards-compat hacks.** No renaming unused `_vars`, no re-exporting removed types, no `// removed` comments for deleted code.
-- **No speculative abstractions.** No interface with one implementation, no factory for one product, no config for a value that never changes.
-- **Write only what you checked.** A claim in a doc, commit, or comment is read as fact. Give mechanism and command, not motive. Mark unverified things as unverified, or omit them.
+- **Every line has a purpose.** If you cannot name it, delete it. Deletion beats addition.
+- **No speculative abstractions.** No interface with one implementation, no factory for one product, no config for a value that never changes, no scaffolding "for later".
+- **No backwards-compat hacks.** No renaming unused `_vars`, no re-exporting removed types, no `// removed` comments for deleted code, no `hasattr`/`try: import` fallbacks in a project with no external consumers.
+- **One obvious way per task.** No parallel mechanisms, no second config format, no alias or shim beside the real name. One name per function.
+- **Names are documentation.** Name for what the thing does, never a name that can be misread as its opposite or as something broader. A reader must infer the behavior without the docs.
+- **No magic numbers.** Every threshold and tuning constant is a named module-level constant.
+- **No hardcoded tunables.** Anything that varies by deployment is a validated config field. A `DEFAULT_*` constant is not configurability. Protocol constants, external specs, and security invariants stay fixed.
+- **Static types everywhere.** Make illegal states unrepresentable. Trust the type system inside a boundary instead of adding runtime checks the static interface already guarantees.
+- **Fail as early as possible:** compile time beats startup, startup beats request time. Compile errors beat crashes, crashes beat subtle bugs.
+- **Misconfiguration fails loud** at load when it is self-contained, otherwise at the first point it can be resolved. Never silently skip a missing referent.
+- **Idiomatic error handling.** Propagate or handle. Never swallow. An empty catch names what it swallows and why nothing else can reach it, and wraps exactly one statement.
+- **Resources are explicit.** Pass the allocator or handle in, release it next to the acquisition (`defer` / `errdefer` / context manager), never a hidden global. Allocation may fail; deallocation must succeed.
+- **Handle the edges:** empty, zero, one, max, malformed, truncated.
+- **Validate at trust boundaries, trust inside them.** Parser, config, file, wire, process, and model/tool JSON are boundaries. Same-process typed calls are not.
+- **Match the file you are editing.** Its naming, its comment density, its idioms.
+- **Prefer symmetry for parallel values.** Unexplained asymmetry is usually a missed extraction.
+
+---
+
+## Testing
+
+- Write tests with the implementation, not after. For a bug fix, write the failing test first and confirm it fails for the intended reason.
+- A test drives the real entry point and asserts shipped output: stdout, a JSON field, a written file. Re-implementing the logic inside the test, injecting a finished result and reading it back, or asserting only exit code 0, is not a test.
+- Do not add helpers that only tests call. That is inert code, not coverage.
+- Unit-test every non-trivial function. Fuzz parsers, serializers, decoders, and every handler of untrusted or external input.
+- Trivial wrappers and getters need no tests. YAGNI applies to tests too.
+- Tests describe behavior, not correctness. When behavior is deliberately changed, change its tests in the same commit and say why.
+- Coverage ratchets: it may rise, never fall.
+- A wedged child process must fail the test, never hang it. A hang reads as a slow test.
+- Untested code is broken. An undocumented feature is incomplete.
+
+---
+
+## Dependencies
+
+- **Parsimony.** A dependency is a permanent maintenance and security cost. Check the standard library, then the platform, then what is already installed, before adding anything.
+- **Use what is already imported.** If a linked library parses that format, do not hand-roll it. No manual `struct.unpack` of headers when a binary-format library is present, no regex parsing of a language that has a parser in the tree, no `os.path` string surgery where `Path` exists.
+- **Native APIs over external processes.** Before `exec`/`subprocess`/backticks for `pgrep`, `ip`, `jq`, `curl`, `grep`, `awk`, or `ps`, use the in-process equivalent: walk `/proc` instead of `pgrep`, an HTTP client instead of `curl`, a JSON parser instead of `jq`, netlink or syscalls instead of `ip`/`ss`. Shelling out adds a dependency, a parsing surface, and an injection path. Only shell out when no in-process API exists, and note that in a comment.
+- **One language per file.** No Python heredocs or `python -c "..."` inside shell scripts. Write the script file and call it.
+- **Prefer open-source tooling** for compilers, disassemblers, emulators, and converters. Never let a build or a test gate depend on a closed-source tool.
+- **Vendored code is pinned** with its upstream revision and a manifest of local patches. The build fails loudly when the patches are not applied, instead of silently compiling pristine upstream.
+
+---
+
+## Security and Secrets
+
+- Secrets come from the environment or a local config file that is gitignored. Never in argv (it is world-readable in the process table), never in a commit, never in a log line.
+- Never commit credentials, session dumps, or key material. Redistributable third-party binaries and assets need their license; game or vendor assemblies do not belong in a repo at all.
+- Untrusted input is anything crossing into your process: a reviewed repository's file names and contents, tool output, model output, user text. Sanitize before display, and never interpolate it into a prompt, a shell command, or SQL without fencing or parameterization.
+- Pass runtime values into a shell through the environment, never by string-interpolating them into the script body.
+- Never `eval()`, `new Function()`, or their implied forms.
+- Error responses carry a sanitized message. Raw stack traces and exception text never reach a response body.
+- Run load, scanning, or exploitation tooling only against systems you administer or have written permission to test.
+
+---
+
+## Repository Hygiene
+
+**Scratch files: `.scratch/`, never `/tmp`.**
+
+Every temporary, experimental, or bisect file goes in `.scratch/` at the project root, gitignored. Never in `src/`, never loose in the project root. Outside a project, use a disk-backed path like `~/.cache/`.
+
+Never write to `/tmp` or any other tmpfs, not even for small throwaway files. It is RAM-backed, so files there consume memory and vanish on reboot. This includes venvs, model downloads, build directories, logs, and one-off scripts. Check with `df -h <dir>`; `Type tmpfs` means RAM.
+
+**Project root stays clean.** Config files, dependency manifests, top-level docs, and CI/ignore files only. Tests live under `tests/`, scripts under `scripts/`, generated output under `build/` or `dist/`. Do not commit build outputs, captures, generated worlds, or other large runtime artifacts.
+
+**Never pollute the host.** Use a container or a project-local venv for dependencies, builds, services, and experiments. Never `--break-system-packages`, `sudo pip`, or a system-wide `npm i -g` into a managed path. A container does not justify `pip` either: on an image with a prebuilt Python, inherit it with `uv venv --system-site-packages /opt/venv`.
+
+**Every script finds its own root** by walking up for a project marker file. Never `Path(__file__).parent.parent`, never a hardcoded `/home/...`.
+
+**A rename updates every reference in the same change:** code, docs, CI, and the layout section of the AGENTS.md that describes it.
+
+---
+
+## Documentation
+
+### AGENTS.md hierarchy
+
+AGENTS.md files are binding work contracts for their subtree. The nearest one is the local contract, the ones above it hold repo-wide rules.
+
+**Before editing:** read the root AGENTS.md, list the paths you expect to touch, walk from the root to each of them, and read every AGENTS.md on the way. The closer doc wins on local detail, but no child may weaken a parent's rule. Re-read the chain in the current session. Do not work from memory.
+
+**After editing:** update the closest owning doc when the change affects purpose, scope, ownership, structure, contracts, workflows, inputs, outputs, permissions, constraints, or artifacts. Update parents when the parent-level structure or child index changes. Remove stale and contradictory text immediately.
+
+**Keep docs operational:** stable contracts, not diary entries. Broad rules in parent docs, concrete detail in child docs. Direct bullets with explicit names. Delete history instead of explaining it. Do not duplicate a rule across files unless each scope genuinely needs its own version.
+
+`CLAUDE.md` is a symlink to `AGENTS.md`. Edit the real file.
+
+### Docs accuracy
+
+- Documentation describes verified behavior, not plausible behavior. Before documenting an API name, endpoint, path, flag, or environment variable, search for it. No source match means it does not get documented.
+- Measure mutable counts instead of writing them from memory.
+- Copy examples from working usage or run them. A `path/to/file.ts:line` reference beats an invented signature.
+- Do not advertise a stub as working, and do not document an unimplemented path as the way to do something.
+- A new flag lands in the README and in the tool's own `--help` output, in the same change.
+- README is the landing page: what it is, install, one screen per idea, links out. Detail belongs in `docs/`.
+- Record what was deliberately not built and why. When one of those ships, move the entry out rather than leaving both.
+
+### PRD / RFC / ADR
+
+- **PRD**: product requirements. What to build and why (problem, requirements, acceptance).
+- **RFC**: request for comments. The technical proposal (the "how"), circulated before the decision is locked.
+- **ADR**: records a decision that has been made (Context, Decision, Consequences). Statuses: Accepted, Amended by NNN, Superseded by NNN.
+
+A decision still being made is an RFC, never a "proposed ADR". Decisions live in `docs/adr/` as `NNN-short-title.md` or `YYYY-MM-DD-topic.md`, listed in a README index. A reversal supersedes the record, it never edits it. Small fixes go in the CHANGELOG, not an ADR.
 
 ---
 
 ## Code Search
 
-Use `ast-grep` for structural code search and refactoring whenever feasible. Prefer AST-based pattern matching over regex-based grep for finding code structures, renaming symbols, and analyzing patterns across codebases.
+- **`rg` (ripgrep)** for plain text and literal searches, never `grep -r`, `find | xargs grep`, or `ls -R | grep`. It is faster, respects `.gitignore`, and skips binaries and `.git`. `rg --files` replaces `find -type f`.
+- **`ast-grep` (`sg`)** for structural search and rewrites. It matches the AST, so comments, strings, and formatting do not interfere. Use it for "what kind of code is this" questions and for multi-line or syntax-aware rewrites, in place of `sed`.
+- **`semcode`** for semantic queries on large indexed C/C++/Rust trees: `semcode-index -s .` builds the DB, then `func`, `callers`, `calls`, `callchain`, `vgrep`. Use it instead of chaining `rg` calls for "who calls X", "what does X call", "where is type X defined".
+
+Plain `grep` remains fine for non-code text and quick one-offs.
 
 ---
 
@@ -88,14 +248,18 @@ uv python pin 3.12           # writes .python-version
 uv venv .venv && source .venv/bin/activate
 uv pip install <package>     # replaces pip install
 uv add <package>             # adds to pyproject.toml + uv.lock
+uv add --optional dev <pkg>  # dev dependency
 uv sync                      # install exact lockfile
 uv sync --frozen             # CI: fail if lockfile is stale
 uv run python script.py      # runs in project env without activating
 uv run pytest
+uv tool install <tool>       # replaces pipx install
 uvx ruff check .             # ephemeral tool, replaces pipx run
 ```
 
-**Never use `pip install --break-system-packages`.** If `uv` is not installed: `brew install uv`.
+**Never use `pip install --break-system-packages`.** If `uv` is not installed: `curl -LsSf https://astral.sh/uv/install.sh | sh` (or `brew install uv`).
+
+Add dependencies with `uv add`, not by hand-editing `pyproject.toml`: it records the dependency in the lockfile too.
 
 Standalone scripts with inline deps:
 
@@ -120,9 +284,16 @@ bun add <package>            # replaces npm install <pkg>
 bun add -d <package>         # dev dep
 bun run dev                  # run package.json scripts
 bun script.ts                # run TS directly, no compile step
-bunx tsc --noEmit            # replaces npx
+bun test                     # replaces jest / vitest, also runs node:test suites
+bun build --compile          # replaces esbuild / webpack / pkg
+bun audit                    # replaces npm audit
+bunx tsc --noEmit            # bun does not type check; this is the exception
 bunx eslint src/
 ```
+
+The lockfile is `bun.lock`. Do not keep a `package-lock.json` beside it, and drop `.nvmrc` and `engines.node` once a repo is on bun. `.env` is loaded automatically, so no `dotenv`. CI installs bun with `oven-sh/setup-bun@v2` (and uv with `astral-sh/setup-uv@v5`), not `actions/setup-node`. `.npmrc`'s `ignore-scripts` has no bun equivalent and is not needed: bun runs lifecycle scripts only for packages listed in `trustedDependencies`, so installs are inert by default.
+
+An existing repo already standardized on another package manager keeps it. Do not migrate unasked.
 
 **Built-in APIs to check before adding any package:**
 
@@ -181,3 +352,5 @@ classDef optional  fill:#f3e8ff,stroke:#9333ea,color:#581c87
 Color semantics: blue = infrastructure/prerequisites, amber = in-flight operations, green = incremental sync, dark green = completion, red = rollback/failure, purple = optional/shared.
 
 Use `flowchart TD` for sequential flows, `flowchart LR` for architecture/component diagrams.
+
+Chart new state machines and non-obvious logic in the same change that introduces them.
