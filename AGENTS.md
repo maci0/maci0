@@ -207,8 +207,21 @@ AGENTS.md files are binding work contracts for their subtree: the nearest one is
 - Copy examples from working usage or run them. A `path/to/file.ts:line` reference beats an invented signature.
 - Never advertise a stub as working or document an unimplemented path as the way to do something.
 - A new flag lands in the README and the tool's own `--help` in the same change.
-- README is the landing page: what it is, install, one screen per idea, links out. Detail belongs in `docs/`.
 - Record what was deliberately not built and why. When one of those ships, move the entry out rather than leaving both.
+
+### README
+
+The README is the project's front page and usually the only page a reader opens. Make it expressive: it has to make someone understand and want the thing in under a minute.
+
+- One line up top: what this is and who it is for. No throat-clearing, no history.
+- Why it exists: the problem, and what makes this approach different from the obvious alternative.
+- Show it working. A screenshot, an asciinema cast, a diagram, or a real terminal transcript beats any paragraph, and anything visual (UI, plots, generated output, hardware) needs an image.
+- A copy-pasteable install and a first command that produces visible output.
+- One real usage example, from actual runs, not invented.
+- Honest status: what works, what is partial, what is planned. A README that oversells is a bug report waiting to happen.
+- Links out to `docs/` and the deeper references.
+
+One screen per idea; detail lives in `docs/`. Badge walls, exhaustive feature lists, roadmap dumps, and marketing adjectives are not expressiveness, they are noise. Every claim, command, and flag in it is verified against the current code.
 
 ### PRD / RFC / ADR
 
