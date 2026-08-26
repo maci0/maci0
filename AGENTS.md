@@ -257,6 +257,8 @@ uv venv .venv && source .venv/bin/activate
 uv pip install <package>     # replaces pip install
 uv add <package>             # pyproject.toml + uv.lock, never hand-edit them
 uv add --optional dev <pkg>  # dev dependency
+uv pip install -r requirements.txt   # sync a bare requirements file
+uv lock                      # resolve and write uv.lock
 uv sync                      # install exact lockfile
 uv sync --frozen             # CI: fail if lockfile is stale
 uv run python script.py      # project env without activating
@@ -293,6 +295,8 @@ bun script.ts                # run TS directly, no compile step
 bun test                     # replaces jest / vitest, also runs node:test suites
 bun build --compile          # replaces esbuild / webpack / pkg
 bun audit                    # replaces npm audit
+bun install -g <pkg>         # global CLI, into ~/.bun, not a system path
+bun build <file> >/dev/null  # syntax check, replaces node --check
 bunx tsc --noEmit            # bun does not type check; this is the exception
 bunx oxlint                  # lint (see below), replaces eslint
 ```
