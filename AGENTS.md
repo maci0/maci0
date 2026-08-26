@@ -1,6 +1,6 @@
 # Agent Rules
 
-Universal rules for all projects. Project AGENTS.md files narrow or extend them.
+Universal rules for all projects; project AGENTS.md files narrow or extend them.
 
 ---
 
@@ -28,8 +28,8 @@ Good: "Storage failed (Hitachi CSI driver), causing 0 migrations."
 
 **Prose discipline:**
 
-- **Semantic compression.** After drafting anything (docs, comments, commits, PR bodies, chat), re-read it line by line and cut every word, clause, or sentence whose removal changes no meaning. Same facts, fewer words. This is not summarizing: a dropped rule, caveat, name, or number is a defect, not a saving.
-- Comments and docs carry contracts and context, not reasoning transcripts: no narrated control flow, no review history, no restating the code, nothing obvious from the code.
+- **Semantic compression.** Re-read every draft (docs, comments, commits, PR bodies, chat) line by line and cut each word, clause, or sentence whose removal changes no meaning. Same facts, fewer words. This is not summarizing: a dropped rule, caveat, name, or number is a defect, not a saving.
+- Comments and docs carry contracts and context, not reasoning transcripts: no narrated control flow, no review history, nothing that restates or is obvious from the code.
 - Direct, concrete terms, no metaphors. Before "contract", "boundary", or "shape", look for the exact word: "response fields", "JSON validation", "ESM exports".
 - Keep behavior, failure, timing, ownership, and safe-use facts; link the rationale instead of inlining it.
 
@@ -37,7 +37,7 @@ Good: "Storage failed (Hitachi CSI driver), causing 0 migrations."
 
 ## Git and AI Attribution
 
-Everything that leaves the machine (commits, PRs, issues, docs, changelogs, code comments) must be indistinguishable from a skilled human's work.
+Everything that leaves the machine must be indistinguishable from a skilled human's work.
 
 **Hard rules:**
 
@@ -47,7 +47,7 @@ Everything that leaves the machine (commits, PRs, issues, docs, changelogs, code
 4. **PR descriptions are minimal:** what changed, how to test. No "Summary of Changes" header, no per-file breakdown, no celebratory language.
 5. **Never stage throwaway files:** agent notes, handoff docs (HANDOVER.md, HANDOFF.md), exploratory prototypes. Scratch work goes in `.scratch/`.
 
-Real people are credited normally: a `Co-authored-by: Name <email>` trailer for a human is correct and expected.
+Real people are credited normally: a `Co-authored-by: Name <email>` trailer is correct and expected.
 
 **Commit message style:**
 
@@ -123,14 +123,14 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 - **Names are documentation.** Name for what the thing does, never a name readable as its opposite or as something broader. Behavior must be inferable without the docs.
 - **No magic numbers.** Every threshold and tuning constant is a named module-level constant.
 - **No hardcoded tunables.** Whatever varies by deployment is a validated config field; a `DEFAULT_*` constant is not configurability. Protocol constants, external specs, and security invariants stay fixed.
-- **Static types everywhere.** Make illegal states unrepresentable. Trust the type system inside a boundary instead of re-checking what the static interface already guarantees.
+- **Static types everywhere.** Make illegal states unrepresentable.
 - **Fail as early as possible:** compile time beats startup, startup beats request time. Compile errors beat crashes, crashes beat subtle bugs.
 - **Misconfiguration fails loud** at load when self-contained, otherwise at the first point it resolves. Never silently skip a missing referent.
 - **Never silence a finding.** Fix the code instead of loosening a type, disabling a lint rule, or adding an empty suppression comment. A suppression that is genuinely right stays narrow, local, and carries its reason.
 - **Idiomatic error handling.** Propagate or handle, never swallow. An empty catch names what it swallows and why nothing else can reach it, and wraps exactly one statement.
 - **Resources are explicit.** Pass the allocator or handle in, release it next to the acquisition (`defer` / `errdefer` / context manager), never a hidden global. Allocation may fail; deallocation must succeed.
 - **Handle the edges:** empty, zero, one, max, malformed, truncated.
-- **Validate at trust boundaries, trust inside them.** Parser, config, file, wire, process, and model/tool JSON are boundaries. Same-process typed calls are not.
+- **Validate at trust boundaries, trust the types inside them.** Parser, config, file, wire, process, and model/tool JSON are boundaries; same-process typed calls are not, so do not re-check what the static interface already guarantees.
 - **Match the file you are editing:** its naming, comment density, idioms.
 - **Prefer symmetry for parallel values.** Unexplained asymmetry is usually a missed extraction.
 
@@ -142,7 +142,7 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 - A test drives the real entry point and asserts shipped output: stdout, a JSON field, a written file. Re-implementing the logic in the test, injecting a finished result and reading it back, or asserting only exit code 0, is not a test.
 - Do not add helpers only tests call: inert code, not coverage.
 - Unit-test every non-trivial function. Fuzz parsers, serializers, decoders, and every handler of untrusted or external input.
-- Trivial wrappers and getters need no tests. YAGNI applies to tests too.
+- Trivial wrappers and getters need no tests: YAGNI applies to tests too.
 - Tests describe behavior, not correctness. A deliberate behavior change updates its tests in the same commit, with the reason.
 - Coverage ratchets: it may rise, never fall.
 - A wedged child process must fail the test, never hang it. A hang reads as a slow test.
@@ -154,8 +154,9 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 
 - **Parsimony.** A dependency is a permanent maintenance and security cost. Check the standard library, then the platform, then what is already installed.
 - **Use what is already imported.** No manual `struct.unpack` of headers when a binary-format library is linked, no regex-parsing a language whose parser is in the tree, no `os.path` surgery where `Path` exists.
-- **Native APIs over external processes.** Rather than `exec`/`subprocess`/backticks for `pgrep`, `ip`, `jq`, `curl`, `grep`, `awk`, or `ps`: walk `/proc`, an HTTP client, a JSON parser, netlink or syscalls. Shelling out adds a dependency, a parsing surface, and an injection path. Shell out only where no in-process API exists, and say so in a comment.
-- **One language per file, one language per command.** Never embed Python in shell: no `python -c "..."`, no `python3 - <<'EOF'` heredoc, not in a committed script and not in a one-off command typed at a prompt. Write the script in its own file and call it. Same rule in reverse for shell inside Python. Same rule in Ansible: purpose-built modules (`stat`, `slurp`, `copy`, `file`, `get_url`, `uri`, `community.libvirt.*`) over `command`, which is the fallback when no module exists (note it), and over `shell`, which is only for real shell features (pipes, redirection, globbing) with `set -o pipefail` and `args: {executable: /bin/bash}`.
+- **Native APIs over external processes.** Not `exec`/`subprocess`/backticks: a `/proc` walk over `pgrep` and `ps`, an HTTP client over `curl`, a JSON parser over `jq`, netlink or syscalls over `ip`/`ss`, in-process text handling over `grep`/`awk`. Shelling out adds a dependency, a parsing surface, and an injection path. Shell out only where no in-process API exists, and say so in a comment.
+- **One language per file, one language per command.** Never embed Python in shell: no `python -c "..."`, no `python3 - <<'EOF'` heredoc, not in a committed script and not in a one-off command typed at a prompt. Write the script in its own file and call it. Same rule in reverse for shell inside Python.
+- **Infrastructure code uses its own resources, never an embedded script.** Ansible: purpose-built modules (`stat`, `slurp`, `copy`, `file`, `get_url`, `uri`, `community.libvirt.*`); `command` only where no module exists (note it), `shell` only for real shell features (pipes, redirection, globbing) with `set -o pipefail` and `args: {executable: /bin/bash}`. Terraform: a provider resource, never a `local-exec`/`remote-exec` provisioner, a `null_resource`/`terraform_data` wrapping a script, or an `external` data source shelling out. A provisioner sits outside the state model: it does not plan, diff, or roll back, and re-runs only when tainted. When no provider covers it, write a provider or move the step out of Terraform.
 - **Prefer open-source tooling** for compilers, disassemblers, emulators, and converters. Never let a build or test gate depend on a closed-source tool.
 - **Vendored code is pinned** to an upstream revision with a manifest of local patches, and the build fails loudly when they are not applied instead of silently compiling pristine upstream.
 
@@ -168,7 +169,7 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 - Untrusted input is anything crossing into the process: a reviewed repo's file names and contents, tool output, model output, user text. Sanitize before display; never interpolate it into a prompt, shell command, or SQL unfenced or unparameterized.
 - Pass runtime values into a shell through the environment, never by interpolating them into the script body.
 - Never `eval()`, `new Function()`, or their implied forms.
-- Error responses carry a sanitized message. Raw stack traces and exception text never reach a response body.
+- Error responses carry a sanitized message; raw stack traces and exception text never reach a response body.
 - Run load, scanning, or exploitation tooling only against systems you administer or have written permission to test.
 
 ---
@@ -212,7 +213,7 @@ AGENTS.md files are binding work contracts for their subtree: the nearest is the
 
 ### README
 
-The README is the front page and usually the only page a reader opens. Make it expressive: it has to make someone understand and want the thing in under a minute.
+The README is the front page and usually the only page a reader opens: expressive enough to make someone understand and want the thing in under a minute.
 
 - One line up top: what this is and who it is for. No throat-clearing, no history.
 - Why it exists: the problem, and what makes this approach different from the obvious alternative.
@@ -222,7 +223,7 @@ The README is the front page and usually the only page a reader opens. Make it e
 - Honest status: what works, what is partial, what is planned. A README that oversells is a bug report waiting to happen.
 - Links out to `docs/` and the deeper references.
 
-One screen per idea; detail lives in `docs/`. Badge walls, exhaustive feature lists, roadmap dumps, and marketing adjectives are noise, not expressiveness. Every claim, command, and flag is verified against the current code.
+One screen per idea; detail lives in `docs/`. Badge walls, exhaustive feature lists, roadmap dumps, and marketing adjectives are noise, not expressiveness.
 
 ### PRD / RFC / ADR
 
@@ -304,7 +305,7 @@ bunx oxlint                  # lint (see below), replaces eslint
 
 The lockfile is `bun.lock`: no `package-lock.json` beside it, and drop `.nvmrc` and `engines.node` once a repo is on bun. `.env` loads automatically, so no `dotenv`. CI installs bun with `oven-sh/setup-bun@v2` (and uv with `astral-sh/setup-uv@v5`), not `actions/setup-node`. `.npmrc`'s `ignore-scripts` has no bun equivalent and needs none: bun runs lifecycle scripts only for packages in `trustedDependencies`, so installs are inert by default.
 
-A repo already standardized on another package manager keeps it. Do not migrate unasked.
+A repo already standardized on another package manager keeps it; do not migrate unasked.
 
 **Linting is `oxlint`**, never ESLint, with [anti-slop](https://github.com/dmmulroy/anti-slop) and [@rikalabs/oxlint-standards](https://github.com/Rika-Labs/oxlint-standards) at `strict`. The silencing moves to watch for here: disabling an anti-slop rule, an empty `SAFETY:` comment, and type laundering (`as any`, `as unknown as T`, a widened signature). Review what `oxlint --fix` rewrites before committing it: its one-var, numeric-separator, and comment-case rewrites have broken bit-exact ports.
 
