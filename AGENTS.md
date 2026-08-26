@@ -241,6 +241,8 @@ A decision still being made is an RFC, never a "proposed ADR". Decisions live in
 
 Plain `grep` remains fine for non-code text and quick one-offs.
 
+A custom `ast-grep` language needs its grammar registered and its `expandoChar` checked before any pattern can be trusted: with the wrong placeholder character, every metavariable pattern parses as an error node and matches nothing, silently, at exit 0. Working Zig setup (grammar build script, config, probe rule): [`ast-grep-zig/`](ast-grep-zig/).
+
 ---
 
 ## Python Toolchain
