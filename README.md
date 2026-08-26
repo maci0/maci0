@@ -17,19 +17,24 @@ to distributed GPU clusters, with side quests in binary reverse engineering.
 ## 🧠 AI inference, down to the metal
 
 - [**agave**](https://github.com/maci0/agave): LLM inference engine written from scratch in Zig, no Python runtime, no framework tax
+- [**cwen**](https://github.com/maci0/cwen): Qwen3 inference in pure C: mmap'd Q4 GGUF, AVX-512 kernels, speculative decoding, zero dependencies
 - [**beam**](https://github.com/maci0/beam): Ray's API reimplemented in ~1,400 lines of pure Python, enough to run vLLM multi-node. NVIDIA and AMD, validated cross-node
 - [**vllm-webgpu**](https://github.com/maci0/vllm-webgpu): vLLM platform plugin targeting WebGPU: WGSL compute kernels instead of CUDA
+- [**vllm-spark-0731**](https://github.com/maci0/vllm-spark-0731): Serving DeepSeek-V4-Flash on a 2-node DGX Spark cluster: fp8 and nvfp4 MLA kernels, everything measured on real hardware
 - [**muninn-sidecar**](https://github.com/maci0/muninn-sidecar): Persistent memory for AI agents, shipped as a Go sidecar
 - [**gpustack-modelsync**](https://github.com/maci0/gpustack-modelsync): Declarative model placement across GPU cluster nodes
+- [**toktop**](https://github.com/maci0/toktop): htop for LLM inference engines and the coding agents hammering them
 - [**gb10-thermal-toolkit**](https://github.com/maci0/gb10-thermal-toolkit): Thermal-driven GPU clock governor for NVIDIA DGX Spark, fixes the under-load power-off
-- [**dgx-spark-deepseek**](https://github.com/maci0/dgx-spark-deepseek-v4-flash-0731): Field notes from serving DeepSeek-V4-Flash on a 2-node DGX Spark RoCE cluster, everything measured on real hardware
 - [**gauntlet**](https://github.com/maci0/gauntlet): Auto-fix review loop, 50 specialized prompts dispatched to whatever AI coding agents you have installed
+- [**clanker**](https://github.com/maci0/clanker): Self-improving agent harness in Zig, gated self-patch loop with sandboxed WASM tools
 
 ## 🕹️ Reverse engineering
 
 - [**rebrew**](https://github.com/maci0/rebrew): Compiler-in-the-loop decompilation workbench for binary-matching reversing
+- [**rebrew-toolchains**](https://github.com/maci0/rebrew-toolchains): Docker images for legacy Windows/DOS compilers, MSVC 1.0-11.0 through Borland, Watcom and Delphi
 - [**europa1400-networkfix**](https://github.com/maci0/europa1400-networkfix): Fixed multiplayer in a 2001 game the vendor abandoned
 - [**openmiles**](https://github.com/maci0/openmiles): Open reimplementation of the Miles Sound System
+- [**ct-recomp**](https://github.com/maci0/ct-recomp): Byte-identical decompilation and asset rebuild of Chrono Trigger (SNES)
 - [**resembl**](https://github.com/maci0/resembl): Assembly code similarity search
 - [**recoverage**](https://github.com/maci0/recoverage): Coverage dashboard for binary-matching decompilation projects
 - [**europa1400-lua**](https://github.com/maci0/europa1400-lua): Lua console injected into a running 2001 game, for reverse engineers and modders
