@@ -28,7 +28,7 @@ Good: "Storage failed (Hitachi CSI driver), causing 0 migrations."
 
 **Prose discipline:**
 
-- **Semantic compression.** Re-read every draft (docs, comments, commits, PR bodies, chat) line by line and cut each word, clause, or sentence whose removal changes no meaning. Same facts, fewer words, and not summarizing: a dropped rule, caveat, name, or number is a defect, not a saving.
+- **Semantic compression.** Re-read every draft (docs, comments, commits, PR bodies, chat) line by line and cut each word, clause, or sentence whose removal changes no meaning. Same facts, fewer words: a dropped rule, caveat, name, or number is a defect, not a saving.
 - Comments and docs carry contracts and context, not reasoning transcripts: no narrated control flow, no review history, nothing that restates or is obvious from the code.
 - Direct, concrete terms, no metaphors. Before "contract", "boundary", or "shape", look for the exact word: "response fields", "JSON validation", "ESM exports".
 - Keep behavior, failure, timing, ownership, and safe-use facts; link the reason instead of inlining it.
@@ -95,7 +95,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 7. Tidy the tree: scratch captures, debug dumps, rebuildable caches, screenshots.
 8. Deliver a verified, documented artifact.
 
-Change one lever at a time. Two changes at once to a measured system produce one unusable result.
+Change one variable at a time. Two changes at once to a measured system produce one unusable result.
 
 Keep changes focused: no unrelated refactors inside a fix, no fighting a toolchain limit a documented workaround already covers.
 
@@ -143,10 +143,11 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 - Do not add helpers only tests call: inert code, not coverage.
 - Unit-test every non-trivial function. Fuzz parsers, serializers, decoders, and every handler of untrusted or external input.
 - Trivial wrappers and getters need no tests: YAGNI applies to tests too.
-- Tests describe behavior, not correctness. A deliberate behavior change updates its tests in the same commit, with the reason.
+- Tests specify observable behavior; a deliberate behavior change updates its tests in the same commit, with the reason.
 - Coverage ratchets: it may rise, never fall.
 - A wedged child process must fail the test, never hang it. A hang reads as a slow test.
 - Untested code is broken. An undocumented feature is incomplete.
+- **HTML and CSS must pass W3C VNU validation.** Run `vnu --format text` against every HTML/CSS file before shipping. Zero errors and zero warnings required.
 
 ---
 
@@ -192,9 +193,9 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 
 ### AGENTS.md hierarchy
 
-AGENTS.md files are binding contracts for their subtree: the nearest is the local one, the ones above hold repo-wide rules.
+AGENTS.md files are authoritative rules for their subtree: the nearest is the local one, the ones above hold repo-wide rules.
 
-**Before editing:** list the paths you expect to touch and read every AGENTS.md on the route from the root to each. The closer doc wins on local detail, but no child may weaken a parent's rule. Re-read the chain this session; never work from memory.
+**Before editing:** list the paths you expect to touch and read every AGENTS.md on the route from the root to each. The closer doc takes precedence on local detail, but no child may weaken a parent's rule. Re-read the chain this session; never work from memory.
 
 **After editing:** update the closest owning doc when the change touches purpose, scope, ownership, structure, contracts, workflows, inputs, outputs, permissions, constraints, or artifacts; update parents when parent-level structure or the child index changes. Delete stale and contradictory text on sight.
 
@@ -220,7 +221,7 @@ The README is the front page and usually the only page a reader opens: expressiv
 - Show it working: a screenshot, asciinema cast, diagram, or real terminal transcript beats any paragraph, and anything visual (UI, plots, generated output, hardware) needs an image.
 - A copy-pasteable install and a first command that produces visible output.
 - One real usage example, from actual runs, not invented.
-- Honest status: what works, what is partial, what is planned. A README that oversells is a bug report waiting to happen.
+- Honest status: what works, what is partial, what is planned. A README that oversells erodes trust.
 - Links out to `docs/` and the deeper references.
 
 One screen per idea; detail lives in `docs/`. Badge walls, full feature lists, roadmap dumps, and marketing adjectives are noise, not expressiveness.
@@ -243,7 +244,7 @@ A decision still being made is an RFC, never a "proposed ADR". Decisions live in
 
 Plain `grep` is fine for non-code text and quick one-offs.
 
-A custom `ast-grep` language needs its grammar registered and its `expandoChar` checked before any pattern can be trusted: with the wrong placeholder, every metavariable pattern parses as an error node and matches nothing, silently, at exit 0. Working setups for Zig, C3, and Hare (grammar build script, config, probe rules): [`ast-grep-grammars/`](ast-grep-grammars/).
+A custom `ast-grep` language needs its grammar registered and its `expandoChar` checked before any pattern can be trusted: with the wrong placeholder, every metavariable pattern parses as an error node and matches nothing, silently, at exit 0. Working setups for Zig, C3, and Hare (grammar build script, config, probe rules) live in `ast-grep-grammars/` when present.
 
 ---
 
@@ -365,4 +366,4 @@ classDef optional  fill:#f3e8ff,stroke:#9333ea,color:#581c87
 
 Colors: blue = infra/prereqs, amber = in-flight work, green = incremental sync, dark green = done, red = rollback/failure, purple = optional/shared. `flowchart TD` for sequential flows, `flowchart LR` for architecture and component diagrams.
 
-Chart new state machines and non-obvious logic in the change that introduces them.
+Diagram new state machines and non-obvious logic in the change that introduces them.
