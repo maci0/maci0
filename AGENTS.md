@@ -10,7 +10,7 @@ All output: chat, docs, commits, PRs, code comments.
 
 **Banned patterns (AI telltale signs):**
 
-- **Em dashes (—)**: never. Use a comma, period, colon, or parentheses. Not `...` or `--` either; restructure the sentence.
+- **Em dashes (—)**: never. Use a comma, period, colon, or parentheses. Not `...` or `--` either; rewrite the sentence.
 - **Weasel words**: streamline, leverage, utilize, facilitate, robust, comprehensive, cutting-edge, delve into, it's worth noting, notably, seamlessly, holistic, actionable, innovative, scalable, synergy, paradigm.
 - **Hedging filler**: "This should help...", "This ensures that...", "This allows you to..."
 - **Trailing summaries** restating what was already said.
@@ -28,10 +28,10 @@ Good: "Storage failed (Hitachi CSI driver), causing 0 migrations."
 
 **Prose discipline:**
 
-- **Semantic compression.** Re-read every draft (docs, comments, commits, PR bodies, chat) line by line and cut each word, clause, or sentence whose removal changes no meaning. Same facts, fewer words. This is not summarizing: a dropped rule, caveat, name, or number is a defect, not a saving.
+- **Semantic compression.** Re-read every draft (docs, comments, commits, PR bodies, chat) line by line and cut each word, clause, or sentence whose removal changes no meaning. Same facts, fewer words, and not summarizing: a dropped rule, caveat, name, or number is a defect, not a saving.
 - Comments and docs carry contracts and context, not reasoning transcripts: no narrated control flow, no review history, nothing that restates or is obvious from the code.
 - Direct, concrete terms, no metaphors. Before "contract", "boundary", or "shape", look for the exact word: "response fields", "JSON validation", "ESM exports".
-- Keep behavior, failure, timing, ownership, and safe-use facts; link the rationale instead of inlining it.
+- Keep behavior, failure, timing, ownership, and safe-use facts; link the reason instead of inlining it.
 
 ---
 
@@ -77,7 +77,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 **Parallel sessions in one repo need isolation.** A branch switch in a shared tree silently destroys another session's uncommitted work.
 
 - One task, one `git worktree` on its own branch. Confirm the base branch, never assume `main` or whatever is checked out.
-- Never `git stash`/`pop` in a shared repo, worktrees and subagents included: the stash lives in the shared object store, so a pop can drop another session's changes into your tree. Compare against a base ref with `git show <ref>:<path>` or `git diff <ref> -- <path>`.
+- Never `git stash`/`pop` in a shared repo, worktrees and subagents included: the stash lives in the shared object store, so a pop can drop another session's changes into your tree. Compare to a base ref with `git show <ref>:<path>` or `git diff <ref> -- <path>`.
 - Never touch a worktree, branch, or uncommitted change you did not create. Tear down only your own, by name. No wildcard `git branch -D 'fix/*'`.
 - A conflicting merge keeps its branch. Losing a run's output silently is worse than a noisy failure.
 - End the session on the branch it started on.
@@ -97,13 +97,13 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 Change one lever at a time. Two changes at once to a measured system produce one unusable result.
 
-Keep changes focused: no unrelated refactors inside a fix, no fighting a toolchain limitation that a documented workaround already covers.
+Keep changes focused: no unrelated refactors inside a fix, no fighting a toolchain limit a documented workaround already covers.
 
 ---
 
 ## Evidence and Honesty
 
-- **Missing is missing.** Never fake, smooth, or interpolate a value to fill a gap. Show `n/a`, an unlit meter, an explained empty result: a fabricated zero reads as a healthy zero.
+- **Missing is missing.** Never fake, smooth, or interpolate a gap. Show `n/a`, an unlit meter, an explained empty result: a faked zero reads as a healthy zero.
 - **Withhold the verdict when evidence is thin.** No grade, score, or percentage from partial coverage; say what is missing instead.
 - **Write only what you checked.** A claim in a doc, commit, or comment is read as fact. Give mechanism and command, not motive; mark the unverified as such or omit it.
 - **Classify truthfully.** Never label something "suspected X". Name the role you can prove and record the exact remaining unknown.
@@ -120,17 +120,17 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 - **No speculative abstractions.** No interface with one implementation, no factory for one product, no config for a value that never changes, no scaffolding "for later".
 - **No backwards-compat hacks** in a project with no external consumers: no renaming unused `_vars`, no re-exporting removed types, no `// removed` comments, no `hasattr`/`try: import` fallbacks.
 - **One obvious way per task.** No parallel mechanisms, no second config format, no alias or shim beside the real name. One name per function.
-- **Names are documentation.** Name for what the thing does, never a name readable as its opposite or as something broader. Behavior must be inferable without the docs.
+- **Names are documentation.** Name for what the thing does, never a name readable as its opposite or as something broader. Behavior must be clear without the docs.
 - **No magic numbers.** Every threshold and tuning constant is a named module-level constant.
 - **No hardcoded tunables.** Whatever varies by deployment is a validated config field; a `DEFAULT_*` constant is not configurability. Protocol constants, external specs, and security invariants stay fixed.
 - **Static types everywhere.** Make illegal states unrepresentable.
 - **Fail as early as possible:** compile time beats startup, startup beats request time. Compile errors beat crashes, crashes beat subtle bugs.
-- **Misconfiguration fails loud** at load when self-contained, otherwise at the first point it resolves. Never silently skip a missing referent.
-- **Never silence a finding.** Fix the code instead of loosening a type, disabling a lint rule, or adding an empty suppression comment. A suppression that is genuinely right stays narrow, local, and carries its reason.
+- **Misconfiguration fails loud** at load when self-contained, else at the first point it resolves. Never silently skip a missing referent.
+- **Never silence a finding.** Fix the code instead of loosening a type, disabling a lint rule, or adding an empty suppression comment. A justified suppression stays narrow, local, and carries its reason.
 - **Idiomatic error handling.** Propagate or handle, never swallow. An empty catch names what it swallows and why nothing else can reach it, and wraps exactly one statement.
 - **Resources are explicit.** Pass the allocator or handle in, free it where you take it (`defer` / `errdefer` / context manager), never from a hidden global. Allocation may fail; freeing must succeed.
 - **Handle the edges:** empty, zero, one, max, malformed, truncated.
-- **Validate at trust boundaries, trust the types inside them.** Parser, config, file, wire, process, and model/tool JSON are boundaries; same-process typed calls are not, so do not re-check what the static interface already guarantees.
+- **Validate at trust boundaries, trust the types inside them.** Parser, config, file, wire, process, and model/tool JSON are boundaries; same-process typed calls are not, so do not re-check what the types already guarantee.
 - **Match the file you are editing:** its naming, comment density, idioms.
 - **Prefer symmetry for parallel values.** Unexplained asymmetry is usually a missed extraction.
 
@@ -138,8 +138,8 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 
 ## Testing
 
-- Tests ship with the implementation, not after. For a bug fix, write the failing test first and confirm it fails for the intended reason.
-- A test drives the real entry point and asserts shipped output: stdout, a JSON field, a written file. Re-implementing the logic in the test, injecting a finished result and reading it back, or asserting only exit code 0, is not a test.
+- Tests ship with the code, not after. For a bug fix, write the failing test first and check it fails for the right reason.
+- A test drives the real entry point and asserts shipped output: stdout, a JSON field, a written file. Re-doing the logic in the test, feeding in a finished result and reading it back, or asserting only exit code 0, is not a test.
 - Do not add helpers only tests call: inert code, not coverage.
 - Unit-test every non-trivial function. Fuzz parsers, serializers, decoders, and every handler of untrusted or external input.
 - Trivial wrappers and getters need no tests: YAGNI applies to tests too.
@@ -152,13 +152,13 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 
 ## Dependencies
 
-- **Parsimony.** A dependency is a permanent maintenance and security cost. Check the stdlib, then the platform, then what is already installed.
+- **Parsimony.** A dependency is a permanent upkeep and security cost. Check the stdlib, then the platform, then what is already installed.
 - **Use what is already imported.** No manual `struct.unpack` of headers when a binary-format library is linked, no regex-parsing a language whose parser is in the tree, no `os.path` surgery where `Path` exists.
-- **Native APIs over external processes.** Not `exec`/`subprocess`/backticks: a `/proc` walk over `pgrep` and `ps`, an HTTP client over `curl`, a JSON parser over `jq`, netlink or syscalls over `ip`/`ss`, in-process text handling over `grep`/`awk`. Shelling out adds a dependency, a parsing surface, and an injection path. Shell out only where no in-process API exists, and say so in a comment.
+- **Native APIs over external processes.** Not `exec`/`subprocess`/backticks: a `/proc` walk over `pgrep` and `ps`, an HTTP client over `curl`, a JSON parser over `jq`, netlink or syscalls over `ip`/`ss`, in-process text handling over `grep`/`awk`. Shelling out adds a dependency, a parsing surface, and an injection path; do it only where no in-process API exists, and say so in a comment.
 - **One language per file, one language per command.** Never embed Python in shell: no `python -c "..."`, no `python3 - <<'EOF'` heredoc, not in a committed script and not in a one-off command typed at a prompt. Write the script in its own file and call it. Same rule in reverse for shell inside Python.
-- **Infrastructure code uses its own resources, never an embedded script.** Ansible: real modules (`stat`, `slurp`, `copy`, `file`, `get_url`, `uri`, `community.libvirt.*`); `command` only where no module exists (note it), `shell` only for real shell features (pipes, redirection, globbing) with `set -o pipefail` and `args: {executable: /bin/bash}`. Terraform: a provider resource, never a `local-exec`/`remote-exec` provisioner, a `null_resource`/`terraform_data` wrapping a script, or an `external` data source shelling out. A provisioner sits outside the state model: no plan, no diff, no rollback, and it re-runs only when tainted. When no provider covers it, write one or move the step out of Terraform.
+- **Infrastructure code uses its own resources, never an embedded script.** Ansible: use the module (`stat`, `slurp`, `copy`, `file`, `get_url`, `uri`, `community.libvirt.*`); `command` only where none exists (note it), `shell` only for shell features (pipes, redirection, globbing) with `set -o pipefail` and `args: {executable: /bin/bash}`. Terraform: a provider resource, never a `local-exec`/`remote-exec` provisioner, a `null_resource`/`terraform_data` wrapping a script, or an `external` data source shelling out. A provisioner sits outside the state model: no plan, no diff, no rollback, and it re-runs only when tainted. When no provider covers it, write one or move the step out of Terraform.
 - **Prefer open-source tools** for compilers, disassemblers, emulators, and converters. Never let a build or test gate depend on a closed-source tool.
-- **Vendored code is pinned** to an upstream revision with a manifest of local patches, and the build fails loudly when they are not applied instead of silently compiling pristine upstream.
+- **Vendored code is pinned** to an upstream revision with a manifest of local patches, and the build fails loud when they are not applied, never quietly compiles pristine upstream.
 
 ---
 
@@ -170,13 +170,13 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 - Pass runtime values into a shell through the env, never by splicing them into the script body.
 - Never `eval()`, `new Function()`, or their implied forms.
 - Error responses carry a sanitized message; raw stack traces and exception text never reach a response body.
-- Run load, scanning, or exploitation tooling only against systems you administer or have written permission to test.
+- Run load, scanning, or exploitation tooling only against systems you run or have written permission to test.
 
 ---
 
 ## Repo Hygiene
 
-**Scratch files: `.scratch/`, never `/tmp`.** Every temporary, experimental, or bisect file goes in gitignored `.scratch/` at the project root, never in `src/`, never loose in the root; outside a project, a disk-backed path like `~/.cache/`. Never write to `/tmp` or any tmpfs, not even a small throwaway: it is RAM-backed, so files eat memory and vanish on reboot. That covers venvs, model downloads, build directories, logs, and one-off scripts. Check with `df -h <dir>`; `Type tmpfs` means RAM.
+**Scratch files: `.scratch/`, never `/tmp`.** Every temporary, experimental, or bisect file goes in gitignored `.scratch/` at the project root, never in `src/`, never loose in the root; outside a project, a disk-backed path like `~/.cache/`. Never write to `/tmp` or any tmpfs, not even a small throwaway: it is RAM-backed, so files eat memory and vanish on reboot. That covers venvs, model downloads, build dirs, logs, and one-off scripts. Check with `df -h <dir>`; `Type tmpfs` means RAM.
 
 **Project root stays clean:** config, dependency manifests, top-level docs, CI and ignore files. Tests under `tests/`, scripts under `scripts/`, output under `build/` or `dist/`. Never commit build outputs, captures, or other large runtime artifacts.
 
@@ -192,7 +192,7 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 
 ### AGENTS.md hierarchy
 
-AGENTS.md files are binding work contracts for their subtree: the nearest is the local contract, the ones above hold repo-wide rules.
+AGENTS.md files are binding contracts for their subtree: the nearest is the local one, the ones above hold repo-wide rules.
 
 **Before editing:** list the paths you expect to touch and read every AGENTS.md on the route from the root to each. The closer doc wins on local detail, but no child may weaken a parent's rule. Re-read the chain this session; never work from memory.
 
@@ -204,12 +204,12 @@ AGENTS.md files are binding work contracts for their subtree: the nearest is the
 
 ### Docs accuracy
 
-- Docs describe verified behavior, not plausible behavior. Search for an API name, endpoint, path, flag, or env var before documenting it: no source match, no entry.
+- Docs describe verified behavior, not plausible. Search for an API name, endpoint, path, flag, or env var before documenting it: no source match, no entry.
 - Measure mutable counts, never write them from memory.
 - Copy examples from working usage or run them. A `path/to/file.ts:line` reference beats an invented signature.
 - Never sell a stub as working, or document an unbuilt path as the way to do it.
 - A new flag lands in the README and the tool's own `--help` in the same change.
-- Record what was deliberately not built and why. When one of those ships, move the entry out rather than leaving both.
+- Record what was deliberately not built and why. When one ships, move the entry out rather than leaving both.
 
 ### README
 
@@ -223,7 +223,7 @@ The README is the front page and usually the only page a reader opens: expressiv
 - Honest status: what works, what is partial, what is planned. A README that oversells is a bug report waiting to happen.
 - Links out to `docs/` and the deeper references.
 
-One screen per idea; detail lives in `docs/`. Badge walls, exhaustive feature lists, roadmap dumps, and marketing adjectives are noise, not expressiveness.
+One screen per idea; detail lives in `docs/`. Badge walls, full feature lists, roadmap dumps, and marketing adjectives are noise, not expressiveness.
 
 ### PRD / RFC / ADR
 
