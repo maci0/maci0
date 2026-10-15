@@ -68,19 +68,20 @@ are handled gracefully.
 Co-Authored-By: Claude <noreply@anthropic.com>
 ```
 
-**Branching:**
+**Branching: trunk-based.**
 
-- Never commit directly to `main` or a release branch. Cut `feat/`, `fix/`, `refactor/`, `docs/`, `test/`, `chore/`.
+- Commit straight to `main`. Small, verified, self-contained commits; `main` stays releasable at every commit.
+- Branch only for work that must not land yet: risky or long-running changes, anything awaiting review. Merge by fast-forward, then delete the branch.
 - Never bypass hooks (`--no-verify`) unless told to.
-- Rewrites use `--force-with-lease`, never raw `--force`.
+- Rewrites use `--force-with-lease`, never raw `--force`. Shared history moves by fast-forward or revert, never by force push.
 
-**Parallel sessions in one repo need isolation.** A branch switch in a shared tree silently destroys another session's uncommitted work.
+**Parallel sessions need a clone each.** One clone has one index and one working tree, and git refuses two worktrees on the same branch, so two sessions on `main` collide without a clone apiece.
 
-- One task, one `git worktree` on its own branch. Confirm the base branch, never assume `main` or whatever is checked out.
-- Never `git stash`/`pop` in a shared repo, worktrees and subagents included: the stash lives in the shared object store, so a pop can drop another session's changes into your tree. Compare to a base ref with `git show <ref>:<path>` or `git diff <ref> -- <path>`.
+- Check the branch and `git status` before committing; never assume `main` or what is checked out.
+- Never `git stash`/`pop` in a clone another session uses: worktrees and subagents share the object store, so a pop can drop another session's changes into your tree. Compare to a base ref with `git show <ref>:<path>` or `git diff <ref> -- <path>`.
 - Never touch a worktree, branch, or uncommitted change you did not create. Tear down only your own, by name. No wildcard `git branch -D 'fix/*'`.
-- A conflicting merge keeps its branch. Losing a run's output silently is worse than a noisy failure.
-- End the session on the branch it started on.
+- A conflicting merge or a rejected push keeps its commits. Losing a run's output silently is worse than a noisy failure.
+- Leave the branch checked out and the tree clean when the session ends.
 
 ---
 
