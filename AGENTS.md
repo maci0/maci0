@@ -107,6 +107,7 @@ Keep changes focused: no unrelated refactors inside a fix, no fighting a toolcha
 - **Missing is missing.** Never fake, smooth, or interpolate a gap. Show `n/a`, an unlit meter, an explained empty result: a faked zero reads as a healthy zero.
 - **Withhold the verdict when evidence is thin.** No grade, score, or percentage from partial coverage; say what is missing instead.
 - **Write only what you checked.** A claim in a doc, commit, or comment is read as fact. Give mechanism and command, not motive; mark the unverified as such or omit it.
+- **Keep a provenance ledger, always.** Every change to a deliverable gets an entry: date, what changed, why, the evidence (file:line, URL, command, computation), who asked or decided, and how it was verified. Append only; a reversal is a new entry. The project's AGENTS.md or README names the ledger file.
 - **Classify truthfully.** Never label something "suspected X". Name the role you can prove and record the exact remaining unknown.
 - **Baseline and candidate must match** in workload, seed, duration, inputs, collectors, and config. A number from a different setup is not a comparison.
 - **Never profile a debug build.** Optimization off can move a hot path by an order of magnitude and flip the profile.
