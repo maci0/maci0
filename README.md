@@ -50,10 +50,13 @@ to distributed GPU clusters, with side quests in binary reverse engineering.
 
 ## ⚙️ Runtimes and clusters
 
-- [**wasmux-demo**](https://github.com/maci0/wasmux-demo): Linux compiled to WebAssembly, booting to an interactive shell in a browser or native WASM host
 - [**hangar**](https://github.com/maci0/hangar): QEMU VM manager with browser consoles and a web UI, served by one Zig daemon
 - [**katamaran**](https://github.com/maci0/katamaran): Live migration for Kata Containers
 - [**vmetal-openshift**](https://github.com/maci0/vmetal-openshift): Virtual baremetal OpenShift lab: Redfish BMC emulation, bonded NICs, split-DNS, one Ansible topology
+
+## 🧪 Utterly useless but cool
+
+- [**wasmux-demo**](https://github.com/maci0/wasmux-demo): Linux compiled to WebAssembly, booting to an interactive shell in a browser or native WASM host
 
 ## 🖥️ Desktop tools
 
