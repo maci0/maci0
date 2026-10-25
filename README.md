@@ -39,6 +39,12 @@ to distributed GPU clusters, with side quests in binary reverse engineering.
 - [**recoverage**](https://github.com/maci0/recoverage): Coverage dashboard for binary-matching decompilation projects
 - [**europa1400-lua**](https://github.com/maci0/europa1400-lua): Lua console injected into a running 2001 game, for reverse engineers and modders
 
+## 🖨️ 3D Printing
+
+- [**phobos**](https://github.com/maci0/phobos): Memory-efficient Zig reimplementation of Moonraker, the API server for Klipper 3D printers
+- [**ReForge**](https://github.com/maci0/reforge): Experimental Buildroot firmware for the FlashForge Adventurer 5M Pro, with upstream Klipper and the stock touch UI
+- [**ff5adm-fw-archive**](https://github.com/maci0/ff5adm-fw-archive): Stock Adventurer 5M / 5M Pro firmware binaries, checksums and reverse-engineering notes
+
 ## ⚙️ Runtimes and clusters
 
 - [**katamaran**](https://github.com/maci0/katamaran): Live migration for Kata Containers
