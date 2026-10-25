@@ -54,9 +54,12 @@ to distributed GPU clusters, with side quests in binary reverse engineering.
 - [**katamaran**](https://github.com/maci0/katamaran): Live migration for Kata Containers
 - [**vmetal-openshift**](https://github.com/maci0/vmetal-openshift): Virtual baremetal OpenShift lab: Redfish BMC emulation, bonded NICs, split-DNS, one Ansible topology
 
-## 🧪 Utterly useless but cool
+## 🧪 Because I could
 
 - [**wasmux-demo**](https://github.com/maci0/wasmux-demo): Linux compiled to WebAssembly, booting to an interactive shell in a browser or native WASM host
+- [**ticker-commentator**](https://github.com/maci0/ticker-commentator): Real-time stock charts narrated by local AI announcer personas
+- [**mario-metrics**](https://github.com/maci0/mario-metrics): Super Mario wired up to New Relic telemetry for conference demos
+- [**uhc**](https://github.com/maci0/uhc): Toy 8-bit computer with a tiny Python assembler and a C emulator
 
 ## 🖥️ Desktop tools
 
