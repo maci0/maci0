@@ -2,11 +2,15 @@
 
 Universal rules for all projects; project AGENTS.md files narrow or extend them.
 
+Changes to this file are recorded in [docs/provenance.md](docs/provenance.md).
+
 ---
 
 ## Writing Style
 
 All output: chat, docs, commits, PRs, code comments.
+
+Always adhere to the writing guidance in [Humanizer](https://github.com/blader/humanizer) and [Unslop](https://github.com/theclaymethod/unslop). Read and apply both repositories' `SKILL.md` guidance when drafting or editing prose, preserving facts, meaning, and the author's voice.
 
 **Banned patterns (AI telltale signs):**
 
@@ -79,7 +83,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 
 - Check the branch and `git status` before committing; never assume `main` or what is checked out.
 - Never `git stash`/`pop` in a clone another session uses: worktrees and subagents share the object store, so a pop can drop another session's changes into your tree. Compare to a base ref with `git show <ref>:<path>` or `git diff <ref> -- <path>`.
-- Never touch a worktree, branch, or uncommitted change you did not create. Tear down only your own, by name. No wildcard `git branch -D 'fix/*'`.
+- Never touch a worktree, branch, or uncommitted change you did not create, except for verified merged-work cleanup under the rule below. Tear down by name. No wildcard `git branch -D 'fix/*'`.
+- After a clean merge to `main`, remove the completed worktree and its local branch without asking again. Also clean up old merged worktrees and local branches encountered in the current repository, including those from earlier sessions, only after verifying that no session still uses them. Refresh the remote refs when available and verify every branch tip is an ancestor of `main` (or the refreshed remote `main`); for squash or rebase merges, require separate proof that all branch changes landed and no later commits remain. Require a clean worktree, including no untracked files, and no merge or rebase in progress. Switch out of the worktree before removing it with `git worktree remove <path>`, then delete the branch with `git branch -d <name>`. Never force removal or deletion; skip and report anything uncertain or refused. Preserve `main`, the primary worktree, active work, and remote branches.
 - A conflicting merge or a rejected push keeps its commits. Losing a run's output silently is worse than a noisy failure.
 - Leave the branch checked out and the tree clean when the session ends.
 
@@ -99,6 +104,8 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 Change one variable at a time. Two changes at once to a measured system produce one unusable result.
 
 Keep changes focused: no unrelated refactors inside a fix, no fighting a toolchain limit a documented workaround already covers.
+
+Stop a process by its exact PID, never by pattern. No `pkill -f`, `killall`, or `pgrep -f ... | xargs kill`: the pattern also matches the command line of the shell running it, so the kill takes down your own shell or another session's process. List candidates first (`pgrep -a <name>` or `ps -eo pid,args`), confirm exactly one PID is the target, then `kill <pid>`. Prefer the job's own handle when you started it (the background task's stop, `$!`).
 
 ---
 
