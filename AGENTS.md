@@ -155,7 +155,7 @@ Stop a process by its exact PID, never by pattern. No `pkill -f`, `killall`, or 
 - Tests specify observable behavior; a deliberate behavior change updates its tests in the same commit, with the reason.
 - Coverage ratchets: it may rise, never fall.
 - A wedged child process must fail the test, never hang it. A hang reads as a slow test.
-- **Never load the host to reproduce a flake.** No CPU, memory, or disk burners (`yes`, `stress`, busy loops, fork loops) in a test, a script, or a one-off: the machine is shared, and the load skews every other gate and check on it. Force the race instead: inject the delay at the racy point, use a fake clock, or wait on an event or barrier. A test that needs wall-clock luck to pass is the bug.
+- **Never load the host to reproduce a flake.** No CPU, memory, or disk burners (`yes`, `stress`, busy loops, fork loops) in a test, a script, or a one-off: the machine is shared, and the load skews every other gate and check on it. Force the race instead: inject the delay at the racy point, use a fake clock, or wait on an event or barrier. A test that needs wall-clock luck to pass is the bug. `hooks/no-host-load.ts` enforces this as a Claude Code `PreToolUse` hook on `Bash`: it refuses the command, or the script the command runs, and logs each refusal to `~/.cache/no-host-load/blocked.log`. Register it in the host's `~/.claude/settings.json`.
 - Untested code is broken. An undocumented feature is incomplete.
 - **HTML and CSS must pass W3C VNU validation.** Run `vnu --format text` against every HTML/CSS file before shipping. Zero errors and zero warnings required.
 
